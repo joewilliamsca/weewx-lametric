@@ -13,11 +13,7 @@ Here are the steps to run the plugin
  
 3) modify your weewx.conf file.  search for LaMetric in the StdRESTful section:
 
-device_key = YOUR_DEVICE_KEY
 
-server_ip = YOUR_LAMETRIC_TIME_IP_ADDR
-
-sound = caticon = 43246
 
 Setting up.
 
