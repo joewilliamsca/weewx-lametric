@@ -2,7 +2,6 @@ Weewx extension to post weather data to your LaMetric Time
 
 Here are the steps to run the plugin
 
-
 1) download the extension:
 
   wget -O weewx-lametric.zip https://github.com/joewilliamsca/weewx-lametric/archive/main.zip
