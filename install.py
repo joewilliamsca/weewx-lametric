@@ -1,4 +1,5 @@
 #LaMetric Time display for weewx data
+#using an existing extension from Matthew Wall (OWN) to build this one
 
 from weecfg.extension import ExtensionInstaller
 
