@@ -1,4 +1,6 @@
 #Weewx-lametric connector
+#using an existing extension from Matthew Wall (OWN) to build this one
+
 """
 Send notifications to your LaMetric Time from weewx
 """
