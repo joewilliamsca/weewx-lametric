@@ -1,5 +1,3 @@
-# weewx-lametric
- 
 Weewx extension to post weather data to your LaMetric Time
 
 Here are the steps to run the plugin
@@ -34,9 +32,6 @@ Setting up.
  You will also need to get the ip address of your LaMetric Time,  by looking at the device info in your phone app
     this will become your server_ip in weewx.conf
     
-    
- 
- 
 
 
 Properties
