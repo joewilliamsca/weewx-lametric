@@ -100,7 +100,7 @@ class LaMetricThread(weewx.restx.RESTThread):
         self.icon = icon
         self.sound = sound
         self.server_url = server_url % server_ip
-        logdbg('server url: %s' % self.server_url)
+        #logdbg('server url: %s' % self.server_url)
         self.skip_upload = to_bool(skip_upload)
 
     def process_record(self, record, dbm):
@@ -109,8 +109,8 @@ class LaMetricThread(weewx.restx.RESTThread):
         if self.skip_upload:
             loginf("skipping upload")
             return
-        logdbg('PR ---- using device_key: %s' % self.device_key)
-        logdbg('PR ---- using server_url: %s' % self.server_url)
+        #logdbg('PR ---- using device_key: %s' % self.device_key)
+        #logdbg('PR ---- using server_url: %s' % self.server_url)
         req = urllib2.Request(self.server_url, data)
         req.get_method = lambda: 'POST'
         req.add_header("User-Agent", "weewx/%s" % weewx.__version__)
@@ -131,7 +131,7 @@ class LaMetricThread(weewx.restx.RESTThread):
                 v = record[rkey] * self._DATA_MAP[key][2] + self._DATA_MAP[key][3]
                 values[key] = self._DATA_MAP[key][1] % v
 
-        logdbg('data: %s' % values) 
+        #logdbg('data: %s' % values) 
         
         #return values
         return " { \"model\": { \"frames\": [{\"icon\": \"%s\", \"text\": \"WeeWx Data\"}, { \"icon\":\"%s\", \"text\":\"PWS: %s\"} ],\"sound\": {\"category\":\"notifications\",\"id\":\"%s\"} } }" % (self.icon, self.icon, values, self.sound)
