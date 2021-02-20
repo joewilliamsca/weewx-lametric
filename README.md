@@ -28,6 +28,7 @@ You will also need to get your api_key from the following location.  https://dev
 Properties
 
    device_key  -  this is from https://developer.lametric.com/user/devices   (api for your device)
+   
    server_ip - this is your ip address for your LaMetric Time
    
    sound - (default is cat)  - Sound that your LaMetric Time will make for the notification 
