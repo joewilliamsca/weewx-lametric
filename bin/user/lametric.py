@@ -5,11 +5,12 @@
 Send notifications to your LaMetric Time from weewx
 """
 
-import Queue
+from __future__ import absolute_import
+import six.moves.queue
 import base64
 import syslog
-import urllib
-import urllib2
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
+import six.moves.urllib.request, six.moves.urllib.error, six.moves.urllib.parse
 
 
 import weewx
@@ -17,7 +18,7 @@ import weewx.restx
 import weewx.units
 from weeutil.weeutil import to_bool, accumulateLeaves
 
-VERSION = "0.1"
+VERSION = "0.2"
 
 if weewx.__version__ < "3":
     raise weewx.UnsupportedFeature("weewx 3 is required, found %s" %
@@ -49,13 +50,13 @@ class LaMetric(weewx.restx.StdRESTbase):
             site_dict['device_key']
             site_dict['icon']
             site_dict['sound']
-        except KeyError, e:
+        except KeyError as e:
             logerr("Data will not be posted: Missing option %s" % e)
             return
         site_dict['manager_dict'] = weewx.manager.get_manager_dict(
             config_dict['DataBindings'], config_dict['Databases'], 'wx_binding')
 
-        self.archive_queue = Queue.Queue()
+        self.archive_queue = six.moves.queue.Queue()
         self.archive_thread = LaMetricThread(self.archive_queue, **site_dict)
         self.archive_thread.start()
         self.bind(weewx.NEW_ARCHIVE_RECORD, self.new_archive_record)
@@ -113,7 +114,7 @@ class LaMetricThread(weewx.restx.RESTThread):
             return
         #logdbg('PR ---- using device_key: %s' % self.device_key)
         #logdbg('PR ---- using server_url: %s' % self.server_url)
-        req = urllib2.Request(self.server_url, data)
+        req = six.moves.urllib.request.Request(self.server_url, data)
         req.get_method = lambda: 'POST'
         req.add_header("User-Agent", "weewx/%s" % weewx.__version__)
         b64s = base64.encodestring('%s:%s' % ('dev',self.device_key)).replace('\n', '')
@@ -129,11 +130,20 @@ class LaMetricThread(weewx.restx.RESTThread):
         values = {}
         for key in self._DATA_MAP:
             rkey = self._DATA_MAP[key][0]
-            if record.has_key(rkey) and record[rkey] is not None:
+            if rkey in record and record[rkey] is not None:
+              #  logdbg('rkey: %s' % rkey)
+	      #	logdbg('key: %s' % key)
                 v = record[rkey] * self._DATA_MAP[key][2] + self._DATA_MAP[key][3]
+ 	      #	logdbg('v: %s' % v) 
                 values[key] = self._DATA_MAP[key][1] % v
+	      #	logdbg('values[key]: %s' % values[key])
 
-        #logdbg('data: %s' % values) 
-        
+       # logdbg('data: %s' % values) 
+       # logdbg('Barometer: %s' % values['pressure'])    #20768
+       # logdbg('Temp: %s' % values['temp'])		#2497
+       # logdbg('Wind: %s' % values['wind speed'])	#1153
+       # logdbg('Rain: %s' % values['rain today'])	#72
+       # logdbg('Humidity: %s' % values['humidity'])	#2423
+
         #return values
-        return " { \"model\": { \"frames\": [{\"icon\": \"%s\", \"text\": \"WeeWx Data\"}, { \"icon\":\"%s\", \"text\":\"PWS: %s\"} ],\"sound\": {\"category\":\"notifications\",\"id\":\"%s\"} } }" % (self.icon, self.icon, values, self.sound)
+        return " { \"model\": { \"frames\": [{\"icon\": \"%s\", \"text\": \"WeeWx Data\"}, { \"icon\":\"2497\", \"text\":\"%s\"}, { \"icon\":\"20768\", \"text\":\"%s\"}, { \"icon\":\"1153\", \"text\":\"%s\"}, { \"icon\":\"72\", \"text\":\"%s\"}, { \"icon\":\"2423\", \"text\":\"%s\"} ],\"sound\": {\"category\":\"notifications\",\"id\":\"%s\"} } }" % (self.icon, values['temp'], values['pressure'], values['wind speed'], values['rain today'], values['humidity'],  self.sound)
